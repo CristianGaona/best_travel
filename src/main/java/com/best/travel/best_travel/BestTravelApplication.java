@@ -121,10 +121,7 @@ public class BestTravelApplication implements CommandLineRunner{
 
 		tour.addTicket(ticket);
 
-		var tourSaved = this.tourRepository.save(tour);
-
-		this.tourRepository.deleteById(tourSaved.getId());
-
+		this.tourRepository.save(tour);
 
 		
 	}

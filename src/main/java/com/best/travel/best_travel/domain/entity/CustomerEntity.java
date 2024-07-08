@@ -66,7 +66,7 @@ public class CustomerEntity implements Serializable {
     @EqualsAndHashCode.Exclude
     @OneToMany(
         cascade = CascadeType.ALL,
-        fetch =  FetchType.LAZY,
+        fetch =  FetchType.EAGER,
         orphanRemoval = true,
         mappedBy = "customer"
     )
