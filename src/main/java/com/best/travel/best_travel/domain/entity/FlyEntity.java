@@ -23,8 +23,6 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-
-
 @Entity(name = "fly")
 @NoArgsConstructor
 @AllArgsConstructor
@@ -54,13 +52,15 @@ public class FlyEntity implements Serializable {
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @OneToMany(
-        cascade = CascadeType.ALL,
-        fetch =  FetchType.EAGER,
-        orphanRemoval = true,
-        mappedBy = "fly"
+            cascade = CascadeType.ALL,
+            fetch =  FetchType.EAGER,
+            orphanRemoval = true,
+            mappedBy = "fly"
     )
     private Set<TicketEntity> tickets;
 
 
-    
+
 }
+
+
