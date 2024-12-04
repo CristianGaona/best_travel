@@ -15,5 +15,4 @@ import java.io.Serializable;
 public class TicketRequest implements Serializable {
     private String idClient;
     private Long idFly;
-
 }
