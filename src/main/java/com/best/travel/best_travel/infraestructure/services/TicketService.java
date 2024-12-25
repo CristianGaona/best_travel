@@ -58,7 +58,19 @@ public class TicketService implements ITicketService {
 
     @Override
     public TicketResponse update(UUID uuid, TicketRequest request) {
-        return null;
+
+        var ticketToUpdate = this.ticketRepository.findById(uuid).orElseThrow();
+        var fly = flyRepository.findById(request.getIdFly()).orElseThrow();
+
+        ticketToUpdate.setFly(fly);
+        ticketToUpdate.setPrice(BigDecimal.valueOf(0.25));
+        ticketToUpdate.setDepartureDate(LocalDateTime.now());
+        ticketToUpdate.setArrivalDate(LocalDateTime.now());
+
+        var ticketUpdated = this.ticketRepository.save(ticketToUpdate);
+        log.info("Ticket updated with id {}", ticketUpdated.getId());
+
+        return this.entityToResponse(ticketUpdated);
     }
 
     @Override
@@ -68,7 +80,8 @@ public class TicketService implements ITicketService {
 
     @Override
     public void delete(UUID uuid) {
-
+        var ticketToDelete = this.ticketRepository.findById(uuid).orElseThrow();
+        this.ticketRepository.delete(ticketToDelete);
     }
 
     private TicketResponse entityToResponse(TicketEntity entity){
