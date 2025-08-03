@@ -1,26 +1,25 @@
 package com.best.travel.best_travel.infraestructure.services;
 
-import com.best.travel.best_travel.api.models.request.ReservationRequest;
-import com.best.travel.best_travel.api.models.responses.FlyResponse;
-import com.best.travel.best_travel.api.models.responses.HotelResponse;
-import com.best.travel.best_travel.api.models.responses.ReservationResponse;
-import com.best.travel.best_travel.api.models.responses.TicketResponse;
-import com.best.travel.best_travel.domain.entity.ReservationEntity;
-import com.best.travel.best_travel.domain.entity.TicketEntity;
-import com.best.travel.best_travel.domain.repository.CustomerRepository;
-import com.best.travel.best_travel.domain.repository.HotelRepository;
-import com.best.travel.best_travel.domain.repository.ReservationRepository;
-import com.best.travel.best_travel.infraestructure.asbtract_services.IReservationService;
-import lombok.AllArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.best.travel.best_travel.api.models.request.ReservationRequest;
+import com.best.travel.best_travel.api.models.responses.HotelResponse;
+import com.best.travel.best_travel.api.models.responses.ReservationResponse;
+import com.best.travel.best_travel.domain.entity.ReservationEntity;
+import com.best.travel.best_travel.domain.repository.CustomerRepository;
+import com.best.travel.best_travel.domain.repository.HotelRepository;
+import com.best.travel.best_travel.domain.repository.ReservationRepository;
+import com.best.travel.best_travel.infraestructure.asbtract_services.IReservationService;
+
+import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 
 @Transactional
 @Service
@@ -56,12 +55,28 @@ public class ReservationService implements IReservationService {
 
     @Override
     public ReservationResponse read(UUID uuid) {
-        return null;
+        var reservationFromDb = this.reservationRepository.findById(uuid).orElseThrow();
+        return this.entityToResponse(reservationFromDb);
     }
 
     @Override
     public ReservationResponse update(UUID uuid, ReservationRequest request) {
-        return null;
+        var hotel = this.hotelRepository.findById(request.getIdHotel()).orElseThrow();
+
+        var reservationToUpdate = this.reservationRepository.findById(uuid).orElseThrow();
+
+        reservationToUpdate.setHotel(hotel);
+        reservationToUpdate.setTotalDays(request.getTotalDays());
+        reservationToUpdate.setDateTimeReservation(LocalDateTime.now());
+        reservationToUpdate.setDateStart(LocalDate.now());
+        reservationToUpdate.setDateEnd(LocalDate.now().plusDays(request.getTotalDays()));
+        reservationToUpdate.setPrice(hotel.getPrice().add(hotel.getPrice().multiply(CHARGES_PRICE_PERCENTAGES)));
+
+        var reservationUpdated = this.reservationRepository.save(reservationToUpdate);
+
+        log.info("Reservation updated with id: {}", reservationUpdated.getId());
+
+        return this.entityToResponse(reservationUpdated);
     }
 
     @Override
@@ -71,10 +86,10 @@ public class ReservationService implements IReservationService {
 
     @Override
     public void delete(UUID uuid) {
-
+        var reservationToDelete = this.reservationRepository.findById(uuid).orElseThrow();
+        this.reservationRepository.delete(reservationToDelete);
     }
 
-    private static final BigDecimal CHARGES_PRICE_PERCENTAGES = BigDecimal.valueOf(0,20);
 
     private ReservationResponse entityToResponse(ReservationEntity reservation){
         var response = new ReservationResponse();
@@ -84,4 +99,13 @@ public class ReservationService implements IReservationService {
         response.setHotelResponse(hotelResponse);
         return response;
     }
+
+    @Override
+    public BigDecimal findPrice(Long hotelId) {
+        
+        var hotel = this.hotelRepository.findById(hotelId).orElseThrow();
+        return hotel.getPrice().add(hotel.getPrice().multiply(CHARGES_PRICE_PERCENTAGES));
+    }
+
+    private static final BigDecimal CHARGES_PRICE_PERCENTAGES = BigDecimal.valueOf(0,20);
 }

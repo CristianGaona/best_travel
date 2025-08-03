@@ -1,5 +1,13 @@
 package com.best.travel.best_travel.infraestructure.services;
 
+import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.UUID;
+
+import org.springframework.beans.BeanUtils;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.best.travel.best_travel.api.models.request.TicketRequest;
 import com.best.travel.best_travel.api.models.responses.FlyResponse;
 import com.best.travel.best_travel.api.models.responses.TicketResponse;
@@ -9,16 +17,9 @@ import com.best.travel.best_travel.domain.repository.FlyRepository;
 import com.best.travel.best_travel.domain.repository.TicketRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.ITicketService;
 import com.best.travel.best_travel.util.BestTravelUtil;
+
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.BeanUtils;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Transactional
 @Service
