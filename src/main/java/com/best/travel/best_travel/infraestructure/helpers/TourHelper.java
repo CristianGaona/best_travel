@@ -30,7 +30,7 @@ public class TourHelper {
     private final ReservationRepository reservationRepository;
     
 
-    private Set<TicketEntity> createTickets(Set<FlyEntity> fligths, CustomerEntity customer) {
+    public Set<TicketEntity> createTickets(Set<FlyEntity> fligths, CustomerEntity customer) {
         var response = new HashSet<TicketEntity>(fligths.size());
         fligths.forEach(fly -> {
              var ticketToPersist = TicketEntity.builder()
@@ -47,7 +47,7 @@ public class TourHelper {
         return response;
     }
     
-    private Set<ReservationEntity> createReservations(HashMap<HotelEntity, Integer> hotels, CustomerEntity customer) {
+    public Set<ReservationEntity> createReservations(HashMap<HotelEntity, Integer> hotels, CustomerEntity customer) {
         var response = new HashSet<ReservationEntity>(hotels.size());
         hotels.forEach((hotel, totalDays) -> {
             var reservationToPersist = ReservationEntity.builder()

@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Builder
 public class TourRequest implements Serializable {
     
-    public Serializable customerId;
+    public String customerId;
     private Set<TourFlyRequest> flights;
     private Set<TourHotelRequest> hotels;
 }
