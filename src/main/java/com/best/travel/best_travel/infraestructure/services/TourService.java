@@ -20,6 +20,7 @@ import com.best.travel.best_travel.domain.repository.FlyRepository;
 import com.best.travel.best_travel.domain.repository.HotelRepository;
 import com.best.travel.best_travel.domain.repository.TourRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.ITourService;
+import com.best.travel.best_travel.infraestructure.helpers.CustomerHelper;
 import com.best.travel.best_travel.infraestructure.helpers.TourHelper;
 
 import lombok.AllArgsConstructor;
@@ -35,22 +36,24 @@ public class TourService implements ITourService {
     private final CustomerRepository customerRepository;
 
     private final TourHelper tourHelper;
+    private final CustomerHelper customerHelper;
 
     @Override
     public TourResponse create(TourRequest request) {
-        var cutomer = customerRepository.findById(request.getCustomerId()).orElseThrow();
+        var customer = customerRepository.findById(request.getCustomerId()).orElseThrow();
         var flights = new HashSet<FlyEntity>();
         request.getFlights().forEach(fly -> flights.add(this.flyRepository.findById(fly.getId()).orElseThrow()));
         var hotels = new HashMap<HotelEntity, Integer>();
         request.getHotels().forEach(hotel -> hotels.put(this.hotelRepository.findById(hotel.getId()).orElseThrow(), hotel.getTotalDays()));
             
        var tourToSave = TourEntity.builder()
-       .tickets(this.tourHelper.createTickets(flights, cutomer))
-       .reservations(this.tourHelper.createReservations(hotels, cutomer))
-       .customer(cutomer)
+       .tickets(this.tourHelper.createTickets(flights, customer))
+       .reservations(this.tourHelper.createReservations(hotels, customer))
+       .customer(customer)
        .build();
 
        var tourSaved = this.tourRepository.save(tourToSave);
+       this.customerHelper.increase(customer.getDni(), TourService.class);
         return TourResponse.builder()
         .reservationIds(tourSaved.getReservations().stream().map(ReservationEntity::getId).collect(Collectors.toSet()))
         .ticketIds(tourSaved.getTickets().stream().map(TicketEntity::getId).collect(Collectors.toSet()))

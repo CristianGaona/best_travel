@@ -19,7 +19,7 @@ import com.best.travel.best_travel.util.SortType;
 
 import lombok.AllArgsConstructor;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @AllArgsConstructor
 public class FlyService implements IFlyService {

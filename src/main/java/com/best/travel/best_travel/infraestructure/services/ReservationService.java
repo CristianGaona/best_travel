@@ -17,6 +17,7 @@ import com.best.travel.best_travel.domain.repository.CustomerRepository;
 import com.best.travel.best_travel.domain.repository.HotelRepository;
 import com.best.travel.best_travel.domain.repository.ReservationRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.IReservationService;
+import com.best.travel.best_travel.infraestructure.helpers.CustomerHelper;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,6 +31,8 @@ public class ReservationService implements IReservationService {
     private final ReservationRepository reservationRepository;
     private final CustomerRepository customerRepository;
     private final HotelRepository hotelRepository;
+
+    private final CustomerHelper customerHelper;
 
 
     @Override
@@ -49,7 +52,7 @@ public class ReservationService implements IReservationService {
                 .build();
 
         var reservationPersisted = this.reservationRepository.save(reservationToPersist);
-
+        this.customerHelper.increase(customer.getDni(), ReservationService.class);
         return this.entityToResponse(reservationPersisted);
     }
 

@@ -16,12 +16,13 @@ import com.best.travel.best_travel.domain.repository.CustomerRepository;
 import com.best.travel.best_travel.domain.repository.FlyRepository;
 import com.best.travel.best_travel.domain.repository.TicketRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.ITicketService;
+import com.best.travel.best_travel.infraestructure.helpers.CustomerHelper;
 import com.best.travel.best_travel.util.BestTravelUtil;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 
-@Transactional
+@Transactional(readOnly = true)
 @Service
 @Slf4j
 @AllArgsConstructor
@@ -30,6 +31,8 @@ public class TicketService implements ITicketService {
     private final FlyRepository flyRepository;
     private final CustomerRepository customerRepository;
     private final TicketRepository ticketRepository;
+
+    private final CustomerHelper customerHelper;
 
     @Override
     public TicketResponse create(TicketRequest request) {
@@ -47,6 +50,7 @@ public class TicketService implements ITicketService {
                 .arrivalDate(BestTravelUtil.getRandomLatrer())
                 .build();
         var ticketPersisted = ticketRepository.save(ticketToPersist);
+        this.customerHelper.increase(customer.getDni(), TicketService.class);
         log.info("Ticket created with id: {}", ticketPersisted.getId());
         return entityToResponse(ticketPersisted);
     }
