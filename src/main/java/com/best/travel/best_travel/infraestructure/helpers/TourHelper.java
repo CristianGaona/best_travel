@@ -65,6 +65,35 @@ public class TourHelper {
         return response;
     }
 
+    public TicketEntity createTicket(FlyEntity fly, CustomerEntity customer) {
+        var ticketToPersist = TicketEntity.builder()
+            .id(UUID.randomUUID())
+            .fly(fly)
+            .customer(customer)
+            .price(fly.getPrice().add(fly.getPrice().multiply(CHARGER_PRICE_PERCENTAGE)))
+            .purchaseDate(LocalDate.now())
+            .departureDate(BestTravelUtil.getRandomSoon())
+            .arrivalDate(BestTravelUtil.getRandomLatrer())
+            .build();
+        return this.ticketRepository.save(ticketToPersist);
+    }
+
+    public ReservationEntity createReservation(HotelEntity hotel, CustomerEntity customer, Integer totalDays) {
+
+        
+        var reservationToPersist = ReservationEntity.builder()
+            .id(UUID.randomUUID())
+            .hotel(hotel)
+            .customer(customer)
+            .totalDays(totalDays)
+            .dateTimeReservation(LocalDateTime.now())
+            .dateStart(LocalDate.now())
+            .dateEnd(LocalDate.now().plusDays(totalDays))
+            .price(hotel.getPrice().add(hotel.getPrice().multiply(CHARGES_PRICE_PERCENTAGES)))
+            .build();
+        return this.reservationRepository.save(reservationToPersist);
+    }
+
     public static final BigDecimal CHARGER_PRICE_PERCENTAGE = BigDecimal.valueOf(0.25);
     private static final BigDecimal CHARGES_PRICE_PERCENTAGES = BigDecimal.valueOf(0,20);
 
