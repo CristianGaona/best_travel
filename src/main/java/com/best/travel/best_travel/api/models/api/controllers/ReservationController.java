@@ -20,6 +20,7 @@ import com.best.travel.best_travel.api.models.request.ReservationRequest;
 import com.best.travel.best_travel.api.models.responses.ReservationResponse;
 import com.best.travel.best_travel.infraestructure.services.ReservationService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 @RestController
@@ -30,7 +31,7 @@ public class ReservationController {
     private final ReservationService reservationService;
 
     @PostMapping
-    public ResponseEntity<ReservationResponse> post (@RequestBody ReservationRequest request){
+    public ResponseEntity<ReservationResponse> post (@Valid @RequestBody ReservationRequest request){
         return ResponseEntity.ok(reservationService.create(request));
     }
 
@@ -40,7 +41,7 @@ public class ReservationController {
     }
 
     @PutMapping(path = "{id}")
-    public ResponseEntity<ReservationResponse> put(@PathVariable UUID id, @RequestBody ReservationRequest request) {
+    public ResponseEntity<ReservationResponse> put(@Valid @PathVariable UUID id, @RequestBody ReservationRequest request) {
         return ResponseEntity.ok(reservationService.update(id, request));
     }
 

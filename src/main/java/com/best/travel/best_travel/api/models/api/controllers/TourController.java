@@ -19,6 +19,7 @@ import com.best.travel.best_travel.api.models.request.TourRequest;
 import com.best.travel.best_travel.api.models.responses.TourResponse;
 import com.best.travel.best_travel.infraestructure.asbtract_services.ITourService;
 
+import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 
 
@@ -31,7 +32,7 @@ public class TourController {
     private final ITourService tourService;
 
     @PostMapping
-    public ResponseEntity<TourResponse> post(@RequestBody TourRequest tourRequest) {
+    public ResponseEntity<TourResponse> post(@Valid @RequestBody TourRequest tourRequest) {
         
         return ResponseEntity.ok(this.tourService.create(tourRequest));
     }
