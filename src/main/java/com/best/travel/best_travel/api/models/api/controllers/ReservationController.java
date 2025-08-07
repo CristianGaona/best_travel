@@ -2,7 +2,9 @@ package com.best.travel.best_travel.api.models.api.controllers;
 
 import java.math.BigDecimal;
 import java.util.Collections;
+import java.util.Currency;
 import java.util.Map;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.http.ResponseEntity;
@@ -12,6 +14,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.best.travel.best_travel.api.models.request.ReservationRequest;
 import com.best.travel.best_travel.api.models.responses.ErrorResponse;
 import com.best.travel.best_travel.api.models.responses.ReservationResponse;
-import com.best.travel.best_travel.infraestructure.services.ReservationService;
+import com.best.travel.best_travel.infraestructure.asbtract_services.IReservationService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -35,7 +38,7 @@ import lombok.AllArgsConstructor;
 @Tag(name = "Reservation", description = "Reservation API")
 public class ReservationController {
 
-    private final ReservationService reservationService;
+    private final IReservationService reservationService;
 
     @ApiResponse(responseCode = "400", description = "When the request have a field invalid we response this", content = {
         @Content(mediaType = "application/json", schema = @Schema(implementation = ErrorResponse.class))
@@ -67,7 +70,8 @@ public class ReservationController {
 
     @Operation(summary = "Return the total price of a reservation based on reservation id")
     @GetMapping
-    public ResponseEntity<Map<String, BigDecimal>> getReservationPrice(@RequestParam Long reservationtId) {
-        return ResponseEntity.ok(Collections.singletonMap("reservationtPrice", reservationService.findPrice(reservationtId)));
+    public ResponseEntity<Map<String, BigDecimal>> getReservationPrice(@RequestParam Long hotelId, @RequestHeader (required = false) Currency currency) {
+        if(Objects.isNull(currency)) currency = Currency.getInstance("USD");
+        return ResponseEntity.ok(Collections.singletonMap("ticketPrice", reservationService.findPrice(hotelId, currency)));
     }
 }

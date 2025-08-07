@@ -3,6 +3,7 @@ package com.best.travel.best_travel.infraestructure.services;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Currency;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -17,6 +18,7 @@ import com.best.travel.best_travel.domain.repository.CustomerRepository;
 import com.best.travel.best_travel.domain.repository.HotelRepository;
 import com.best.travel.best_travel.domain.repository.ReservationRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.IReservationService;
+import com.best.travel.best_travel.infraestructure.helpers.ApiCurrencyConnectorHelper;
 import com.best.travel.best_travel.infraestructure.helpers.BlockListHelper;
 import com.best.travel.best_travel.infraestructure.helpers.CustomerHelper;
 import com.best.travel.best_travel.util.exceptions.IdNotFoundException;
@@ -35,6 +37,7 @@ public class ReservationService implements IReservationService {
     private final HotelRepository hotelRepository;
     private final CustomerHelper customerHelper;
     private final BlockListHelper blackListHelper;
+    private final ApiCurrencyConnectorHelper apiCurrencyConnectorHelper;
 
 
     @Override
@@ -107,10 +110,13 @@ public class ReservationService implements IReservationService {
     }
 
     @Override
-    public BigDecimal findPrice(Long hotelId) {
-        
+    public BigDecimal findPrice(Long hotelId, Currency currency) {
         var hotel = this.hotelRepository.findById(hotelId).orElseThrow(() -> new IdNotFoundException("hotel"));
-        return hotel.getPrice().add(hotel.getPrice().multiply(CHARGES_PRICE_PERCENTAGES));
+        var priceInDollars = hotel.getPrice().add(hotel.getPrice().multiply(CHARGES_PRICE_PERCENTAGES));
+        if(currency.equals(Currency.getInstance("USD"))) return priceInDollars;
+        var currencyDTO = this.apiCurrencyConnectorHelper.getExchangeRate(currency);
+        log.info("API currency in {}, response: {}", currencyDTO.getExchangeDate(), currencyDTO.getRates());
+        return priceInDollars.multiply(currencyDTO.getRates().get(currency));
     }
 
     private static final BigDecimal CHARGES_PRICE_PERCENTAGES = BigDecimal.valueOf(0,20);

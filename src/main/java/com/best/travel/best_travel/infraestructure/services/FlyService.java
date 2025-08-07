@@ -5,11 +5,13 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.reactive.function.client.WebClient;
 
 import com.best.travel.best_travel.api.models.responses.FlyResponse;
 import com.best.travel.best_travel.domain.entity.FlyEntity;
@@ -17,14 +19,17 @@ import com.best.travel.best_travel.domain.repository.FlyRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.IFlyService;
 import com.best.travel.best_travel.util.SortType;
 
-import lombok.AllArgsConstructor;
-
 @Transactional(readOnly = true)
 @Service
-@AllArgsConstructor
 public class FlyService implements IFlyService {
 
     private final FlyRepository flyRepository;
+    private final WebClient webClient;
+
+    public FlyService(FlyRepository flyRepository, @Qualifier(value = "base")  WebClient webClient) {
+        this.flyRepository = flyRepository;
+        this.webClient = webClient;
+    }
 
     @Override
     public Page<FlyResponse> readAll(Integer page, Integer size, SortType sortType) {
