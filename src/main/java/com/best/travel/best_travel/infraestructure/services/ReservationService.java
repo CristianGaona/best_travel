@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Currency;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -21,6 +22,8 @@ import com.best.travel.best_travel.infraestructure.asbtract_services.IReservatio
 import com.best.travel.best_travel.infraestructure.helpers.ApiCurrencyConnectorHelper;
 import com.best.travel.best_travel.infraestructure.helpers.BlockListHelper;
 import com.best.travel.best_travel.infraestructure.helpers.CustomerHelper;
+import com.best.travel.best_travel.infraestructure.helpers.EmailHelper;
+import com.best.travel.best_travel.util.enums.Tables;
 import com.best.travel.best_travel.util.exceptions.IdNotFoundException;
 
 import lombok.AllArgsConstructor;
@@ -38,7 +41,7 @@ public class ReservationService implements IReservationService {
     private final CustomerHelper customerHelper;
     private final BlockListHelper blackListHelper;
     private final ApiCurrencyConnectorHelper apiCurrencyConnectorHelper;
-
+    private final EmailHelper emailHelper;
 
     @Override
     public ReservationResponse create(ReservationRequest request) {
@@ -59,6 +62,8 @@ public class ReservationService implements IReservationService {
 
         var reservationPersisted = this.reservationRepository.save(reservationToPersist);
         this.customerHelper.increase(customer.getDni(), ReservationService.class);
+
+        if(Objects.nonNull(request.getEmail())) this.emailHelper.sendEmail(request.getEmail(), customer.getFullName(), Tables.reservation.name());
         return this.entityToResponse(reservationPersisted);
     }
 

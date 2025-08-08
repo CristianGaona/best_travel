@@ -2,6 +2,7 @@ package com.best.travel.best_travel.infraestructure.services;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
@@ -18,6 +19,7 @@ import com.best.travel.best_travel.domain.repository.TicketRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.ITicketService;
 import com.best.travel.best_travel.infraestructure.helpers.BlockListHelper;
 import com.best.travel.best_travel.infraestructure.helpers.CustomerHelper;
+import com.best.travel.best_travel.infraestructure.helpers.EmailHelper;
 import com.best.travel.best_travel.util.BestTravelUtil;
 import com.best.travel.best_travel.util.enums.Tables;
 import com.best.travel.best_travel.util.exceptions.IdNotFoundException;
@@ -36,6 +38,7 @@ public class TicketService implements ITicketService {
     private final TicketRepository ticketRepository;
     private final CustomerHelper customerHelper;
     private final BlockListHelper blockListHelper;
+    private final EmailHelper emailHelper;
 
     @Override
     public TicketResponse create(TicketRequest request) {
@@ -55,6 +58,7 @@ public class TicketService implements ITicketService {
         var ticketPersisted = ticketRepository.save(ticketToPersist);
         this.customerHelper.increase(customer.getDni(), TicketService.class);
         log.info("Ticket created with id: {}", ticketPersisted.getId());
+        if(Objects.nonNull(request.getEmail())) this.emailHelper.sendEmail(request.getEmail(), customer.getFullName(), Tables.ticket.name());
         return entityToResponse(ticketPersisted);
     }
 

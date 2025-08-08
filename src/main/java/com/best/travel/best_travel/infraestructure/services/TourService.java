@@ -2,6 +2,7 @@ package com.best.travel.best_travel.infraestructure.services;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -22,6 +23,7 @@ import com.best.travel.best_travel.domain.repository.TourRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.ITourService;
 import com.best.travel.best_travel.infraestructure.helpers.BlockListHelper;
 import com.best.travel.best_travel.infraestructure.helpers.CustomerHelper;
+import com.best.travel.best_travel.infraestructure.helpers.EmailHelper;
 import com.best.travel.best_travel.infraestructure.helpers.TourHelper;
 import com.best.travel.best_travel.util.enums.Tables;
 import com.best.travel.best_travel.util.exceptions.IdNotFoundException;
@@ -40,6 +42,7 @@ public class TourService implements ITourService {
     private final TourHelper tourHelper;
     private final CustomerHelper customerHelper;
     private final BlockListHelper blockListHelper;
+    private final EmailHelper emailHelper;
 
     @Override
     public TourResponse create(TourRequest request) {
@@ -58,6 +61,7 @@ public class TourService implements ITourService {
 
        var tourSaved = this.tourRepository.save(tourToSave);
        this.customerHelper.increase(customer.getDni(), TourService.class);
+       if(Objects.nonNull(request.getEmail())) this.emailHelper.sendEmail(request.getEmail(), customer.getFullName(), Tables.tour.name());
         return TourResponse.builder()
         .reservationIds(tourSaved.getReservations().stream().map(ReservationEntity::getId).collect(Collectors.toSet()))
         .ticketIds(tourSaved.getTickets().stream().map(TicketEntity::getId).collect(Collectors.toSet()))
