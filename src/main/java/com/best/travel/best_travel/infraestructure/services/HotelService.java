@@ -5,12 +5,14 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import com.best.travel.best_travel.api.models.responses.HotelResponse;
+import com.best.travel.best_travel.config.CacheConstants;
 import com.best.travel.best_travel.domain.entity.HotelEntity;
 import com.best.travel.best_travel.domain.repository.HotelRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.IHotelService;
@@ -39,6 +41,7 @@ private final HotelRepository hotelRepository;
     }
 
     @Override
+    @Cacheable(value = CacheConstants.HOTEL_CACHE_NAME)
     public Set<HotelResponse> readLessPrice(BigDecimal price) {
         return this.hotelRepository.findByPriceLessThan(price)
                 .stream()
@@ -47,6 +50,7 @@ private final HotelRepository hotelRepository;
     }
 
     @Override
+     @Cacheable(value = CacheConstants.HOTEL_CACHE_NAME)
     public Set<HotelResponse> readBetweenPrices(BigDecimal min, BigDecimal max) {
         return this.hotelRepository.findByPriceIsBetween(min, max)
                 .stream()
@@ -55,6 +59,7 @@ private final HotelRepository hotelRepository;
     }
 
     @Override
+     @Cacheable(value = CacheConstants.HOTEL_CACHE_NAME)
     public Set<HotelResponse> readGreaterThan(Integer rating) {
         return this.hotelRepository.findByRatingGreaterThan(rating)
                 .stream()

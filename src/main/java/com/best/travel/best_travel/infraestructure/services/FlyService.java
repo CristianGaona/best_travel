@@ -6,6 +6,7 @@ import java.util.stream.Collectors;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.reactive.function.client.WebClient;
 
 import com.best.travel.best_travel.api.models.responses.FlyResponse;
+import com.best.travel.best_travel.config.CacheConstants;
 import com.best.travel.best_travel.domain.entity.FlyEntity;
 import com.best.travel.best_travel.domain.repository.FlyRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.IFlyService;
@@ -44,6 +46,7 @@ public class FlyService implements IFlyService {
     }
 
     @Override
+    @Cacheable(value = CacheConstants.FLY_CACHE_NAME)
     public Set<FlyResponse> readLessPrice(BigDecimal price) {
         return this.flyRepository.selectLessPrice(price)
                 .stream()
@@ -52,6 +55,7 @@ public class FlyService implements IFlyService {
     }
 
     @Override
+    @Cacheable(value = CacheConstants.FLY_CACHE_NAME)
     public Set<FlyResponse> readBetweenPrices(BigDecimal min, BigDecimal max) {
         return this.flyRepository.selectBetweenPrices(min, max)
                 .stream()
@@ -60,6 +64,7 @@ public class FlyService implements IFlyService {
     }
 
     @Override
+    @Cacheable(value = CacheConstants.FLY_CACHE_NAME)
     public Set<FlyResponse> readByOriginDestiny(String origin, String destiny) {
         return this.flyRepository.selectOriginDestiny(origin, destiny)
                 .stream()
