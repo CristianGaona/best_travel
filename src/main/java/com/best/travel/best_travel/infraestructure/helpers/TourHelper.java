@@ -11,13 +11,13 @@ import java.util.UUID;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.best.travel.best_travel.domain.entity.CustomerEntity;
-import com.best.travel.best_travel.domain.entity.FlyEntity;
-import com.best.travel.best_travel.domain.entity.HotelEntity;
-import com.best.travel.best_travel.domain.entity.ReservationEntity;
-import com.best.travel.best_travel.domain.entity.TicketEntity;
-import com.best.travel.best_travel.domain.repository.ReservationRepository;
-import com.best.travel.best_travel.domain.repository.TicketRepository;
+import com.best.travel.best_travel.domain.entity.jpa.CustomerEntity;
+import com.best.travel.best_travel.domain.entity.jpa.FlyEntity;
+import com.best.travel.best_travel.domain.entity.jpa.HotelEntity;
+import com.best.travel.best_travel.domain.entity.jpa.ReservationEntity;
+import com.best.travel.best_travel.domain.entity.jpa.TicketEntity;
+import com.best.travel.best_travel.domain.repository.jpa.ReservationRepository;
+import com.best.travel.best_travel.domain.repository.jpa.TicketRepository;
 import com.best.travel.best_travel.util.BestTravelUtil;
 
 import lombok.AllArgsConstructor;

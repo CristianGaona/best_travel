@@ -1,4 +1,4 @@
-package com.best.travel.best_travel.domain.repository;
+package com.best.travel.best_travel.domain.repository.jpa;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -7,7 +7,7 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.best.travel.best_travel.domain.entity.HotelEntity;
+import com.best.travel.best_travel.domain.entity.jpa.HotelEntity;
 
 public interface HotelRepository extends JpaRepository<HotelEntity, Long> {
 

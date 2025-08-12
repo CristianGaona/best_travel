@@ -3,7 +3,7 @@ package com.best.travel.best_travel.infraestructure.helpers;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.best.travel.best_travel.domain.repository.CustomerRepository;
+import com.best.travel.best_travel.domain.repository.jpa.CustomerRepository;
 
 import lombok.AllArgsConstructor;
 

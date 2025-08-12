@@ -1,4 +1,4 @@
-package com.best.travel.best_travel.domain.repository;
+package com.best.travel.best_travel.domain.repository.jpa;
 
 import java.math.BigDecimal;
 import java.util.Optional;
@@ -9,7 +9,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import com.best.travel.best_travel.domain.entity.FlyEntity;
+import com.best.travel.best_travel.domain.entity.jpa.FlyEntity;
 
 @Repository
 public interface FlyRepository extends JpaRepository<FlyEntity, Long> {

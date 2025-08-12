@@ -1,4 +1,4 @@
-package com.best.travel.best_travel.domain.entity;
+package com.best.travel.best_travel.domain.entity.jpa;
 
 import java.io.Serializable;
 import java.util.Set;

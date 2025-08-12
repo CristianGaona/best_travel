@@ -12,13 +12,14 @@ import com.best.travel.best_travel.api.models.responses.BaseErrorResponse;
 import com.best.travel.best_travel.api.models.responses.ErrorResponse;
 import com.best.travel.best_travel.api.models.responses.ErrorsResponse;
 import com.best.travel.best_travel.util.exceptions.IdNotFoundException;
+import com.best.travel.best_travel.util.exceptions.UsernameNotFoundException;
 
 @RestControllerAdvice
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class BadRequestController {
 
-    @ExceptionHandler(IdNotFoundException.class)
-    private BaseErrorResponse handleIdNotFound(IdNotFoundException ex) {
+    @ExceptionHandler({IdNotFoundException.class, UsernameNotFoundException.class})
+    private BaseErrorResponse handleIdNotFound(RuntimeException ex) {
         return ErrorResponse.builder()
                 .message(ex.getMessage())
                 .status(HttpStatus.BAD_REQUEST.name())

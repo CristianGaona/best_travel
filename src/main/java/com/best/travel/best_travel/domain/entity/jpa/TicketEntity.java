@@ -1,4 +1,4 @@
-package com.best.travel.best_travel.domain.entity;
+package com.best.travel.best_travel.domain.entity.jpa;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -6,7 +6,6 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
@@ -19,33 +18,31 @@ import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
-
-@Entity(name = "reservation")
+@Entity(name = "ticket")
 @NoArgsConstructor
 @AllArgsConstructor
 @Data
 @Builder
-public class ReservationEntity implements Serializable {
+public class TicketEntity implements Serializable{
     
     @Id
     private UUID id;
 
-    @Column(name = "date_reservation")
-    private LocalDateTime dateTimeReservation;
+    private LocalDateTime departureDate;
 
-    private LocalDate dateStart;
+    private LocalDateTime arrivalDate;
 
-    private LocalDate dateEnd;
+    private LocalDate purchaseDate;
 
-    private Integer totalDays;
-    
     private BigDecimal price;
-    
+
+
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "hotel_id")
-    private HotelEntity hotel;
+    @JoinColumn(name = "fly_id")
+    private FlyEntity fly;
+
 
     @ToString.Exclude
     @EqualsAndHashCode.Exclude
@@ -59,5 +56,5 @@ public class ReservationEntity implements Serializable {
     @JoinColumn(name = "customer_id")
     private CustomerEntity customer;
 
-    
+
 }

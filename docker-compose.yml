@@ -30,7 +30,7 @@ services:
     container_name: best_travel_users
     environment:
       MONGO_INITDB_ROOT_USERNAME: crisda24
-      MONGO_INITDB_ROOT_PASSWORD: crisda24@
+      MONGO_INITDB_ROOT_PASSWORD: crisda24
       MONGO_INITDB_DATABASE: users
     ports:
       - "27017:27017"

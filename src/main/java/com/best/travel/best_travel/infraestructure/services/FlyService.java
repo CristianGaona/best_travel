@@ -16,8 +16,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 import com.best.travel.best_travel.api.models.responses.FlyResponse;
 import com.best.travel.best_travel.config.CacheConstants;
-import com.best.travel.best_travel.domain.entity.FlyEntity;
-import com.best.travel.best_travel.domain.repository.FlyRepository;
+import com.best.travel.best_travel.domain.entity.jpa.FlyEntity;
+import com.best.travel.best_travel.domain.repository.jpa.FlyRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.IFlyService;
 import com.best.travel.best_travel.util.SortType;
 
