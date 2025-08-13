@@ -8,7 +8,8 @@ import org.springframework.context.annotation.PropertySources;
 //@PropertySource("classpath:configs/api_currency.properties")
 @PropertySources({
     @PropertySource("classpath:configs/api_currency.properties"),
-    @PropertySource("classpath:configs/redis.properties")
+    @PropertySource("classpath:configs/redis.properties"),
+    @PropertySource("classpath:configs/client_security.properties"),
 })
 public class PropertiesConfig {
     

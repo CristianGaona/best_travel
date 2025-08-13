@@ -3,10 +3,17 @@ package com.best.travel.best_travel.infraestructure.services;
 import java.util.Collections;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.User;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.best.travel.best_travel.domain.entity.document.AppUserDocument;
 import com.best.travel.best_travel.domain.repository.mongo.AppUserRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.IUserService;
 import com.best.travel.best_travel.util.exceptions.UsernameNotFoundException;
@@ -18,7 +25,7 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 @AllArgsConstructor
 @Transactional
-public class UserService implements IUserService {
+public class UserService implements IUserService, UserDetailsService {
 
     private final AppUserRepository appUserRepository;
 
@@ -53,8 +60,26 @@ public class UserService implements IUserService {
     private static final String COLLECTION_NAME = "app_user";
 
     @Transactional(readOnly = true)
-    private void loadUserByUsername(String username) {
+    @Override
+    public UserDetails loadUserByUsername(String username) {
         var user = this.appUserRepository.findByUsername(username).orElseThrow(() -> new UsernameNotFoundException(COLLECTION_NAME));
+        return mapUserDetails(user);
+    }
+
+    private static UserDetails mapUserDetails(AppUserDocument user){
+        Set<GrantedAuthority> authorities = user.getRole().getGrantedAuthorities().stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toSet());
+                System.out.println("AUTHORITIES: " + authorities);
+                return new User(
+                    user.getUsername(),
+                    user.getPassword(),
+                    user.isEnabled(),
+                    true,
+                    true,
+                    true,
+                    authorities
+                );
     }
     
 }
