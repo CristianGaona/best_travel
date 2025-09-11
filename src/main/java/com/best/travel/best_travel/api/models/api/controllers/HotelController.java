@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
 import com.best.travel.best_travel.api.models.responses.HotelResponse;
 import com.best.travel.best_travel.infraestructure.asbtract_services.IHotelService;
 import com.best.travel.best_travel.util.SortType;
+import com.best.travel.best_travel.util.anotation.Notify;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -31,6 +32,7 @@ public class HotelController {
     
     @Operation(summary = "Return a page of all hotels in system")
     @GetMapping
+    @Notify(value = "GET HOTEL")
     public ResponseEntity<Page<HotelResponse>> getAll(@RequestParam Integer page, @RequestParam Integer size, @RequestHeader(required = false) SortType sortType) {
         if(ObjectUtils.isEmpty(sortType)) {
             sortType = SortType.NONE;
