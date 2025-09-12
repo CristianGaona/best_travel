@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport name="customer_report" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20">
+    
+    <parameter name="REPORT_TITLE" class="java.lang.String" isForPrompting="false">
+        <defaultValueExpression><![CDATA["Reporte de Clientes - Best Travel"]]></defaultValueExpression>
+    </parameter>
+    <parameter name="GENERATED_DATE" class="java.util.Date" isForPrompting="false">
+        <defaultValueExpression><![CDATA[new java.util.Date()]]></defaultValueExpression>
+    </parameter>
+    
+    <field name="dni" class="java.lang.String"/>
+    <field name="fullName" class="java.lang.String"/>
+    <field name="totalLodgings" class="java.lang.Integer"/>
+    <field name="totalFlights" class="java.lang.Integer"/>
+    <field name="totalTours" class="java.lang.Integer"/>
+    <field name="totalPurchases" class="java.lang.Integer"/>
+    
+    <title>
+        <band height="79">
+            <staticText>
+                <reportElement x="0" y="0" width="555" height="30"/>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="18" isBold="true"/>
+                </textElement>
+                <text><![CDATA[$P{REPORT_TITLE}]]></text>
+            </staticText>
+            <textField pattern="dd/MM/yyyy HH:mm">
+                <reportElement x="0" y="40" width="555" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="10"/>
+                </textElement>
+                <textFieldExpression><![CDATA["Generado el: " + $P{GENERATED_DATE}]]></textFieldExpression>
+            </textField>
+        </band>
+    </title>
+    
+    <columnHeader>
+        <band height="30">
+            <staticText>
+                <reportElement x="0" y="0" width="80" height="30"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[DNI]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="80" y="0" width="200" height="30"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Nombre Completo]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="280" y="0" width="80" height="30"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Hospedajes]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="360" y="0" width="80" height="30"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Vuelos]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="440" y="0" width="80" height="30"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Tours]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="520" y="0" width="35" height="30"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+    
+    <detail>
+        <band height="25">
+            <textField>
+                <reportElement x="0" y="0" width="80" height="25"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{dni}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="80" y="0" width="200" height="25"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Left" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{fullName}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="280" y="0" width="80" height="25"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{totalLodgings}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="360" y="0" width="80" height="25"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{totalFlights}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="440" y="0" width="80" height="25"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{totalTours}]]></textFieldExpression>
+            </textField>
+            <textField>
+                <reportElement x="520" y="0" width="35" height="25"/>
+                <box>
+                    <pen lineWidth="1.0"/>
+                </box>
+                <textElement textAlignment="Center" verticalAlignment="Middle">
+                    <font size="9" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA[$F{totalPurchases}]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+    
+    <summary>
+        <band height="30">
+            <textField>
+                <reportElement x="0" y="0" width="555" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="10" isBold="true"/>
+                </textElement>
+                <textFieldExpression><![CDATA["--- Fin del Reporte ---"]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+    
+</jasperReport>

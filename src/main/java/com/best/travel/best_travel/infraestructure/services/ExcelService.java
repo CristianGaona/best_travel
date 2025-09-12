@@ -22,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 @Service
 @AllArgsConstructor
 @Slf4j
+@org.springframework.context.annotation.Primary
 public class ExcelService implements IReportService {
 
     private final CustomerRepository customerRepository;

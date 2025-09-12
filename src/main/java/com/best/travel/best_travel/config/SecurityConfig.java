@@ -218,9 +218,9 @@ public class SecurityConfig {
     }
 
     private static final String[] PUBLIC_RESOURCES = { "/fly/**", "/hotel/**", "/swagger-ui/**", "/.well-known/**, ",
-            "/v3/api-docs/**" };
+            "/v3/api-docs/**", "/report/**" };
     private static final String[] USER_RESOURCES = { "/tour/**", "/ticket/**", "/reservation/**" };
-    private static final String[] ADMIN_RESOURCES = { "/user/**", "/report/**" };
+    private static final String[] ADMIN_RESOURCES = { "/user/**" };
     private static final String LOGIN_RESOURCE = "/login";
     private static final String AUTH_WRITE = "write";
     private static final String AUTH_READ = "read";
