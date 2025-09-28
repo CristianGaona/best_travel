@@ -79,6 +79,8 @@ public class SecurityConfig {
     @Order(2)
     public SecurityFilterChain appSecurityFilterChain(HttpSecurity http) throws Exception {
          http
+         .csrf(csrf -> csrf.ignoringRequestMatchers("/reactive-report/**"))
+         .cors(Customizer.withDefaults())
             .formLogin(Customizer.withDefaults())
             .authorizeHttpRequests(auth ->
                     auth.requestMatchers(PUBLIC_RESOURCES)
@@ -218,7 +220,7 @@ public class SecurityConfig {
     }
 
     private static final String[] PUBLIC_RESOURCES = { "/fly/**", "/hotel/**", "/swagger-ui/**", "/.well-known/**, ",
-            "/v3/api-docs/**", "/report/**" };
+            "/v3/api-docs/**", "/report/**", "/reactive-report/**" };
     private static final String[] USER_RESOURCES = { "/tour/**", "/ticket/**", "/reservation/**" };
     private static final String[] ADMIN_RESOURCES = { "/user/**" };
     private static final String LOGIN_RESOURCE = "/login";

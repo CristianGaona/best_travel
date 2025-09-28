@@ -11,6 +11,7 @@ import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.best.travel.best_travel.api.models.request.ReportDataRequest;
 import com.best.travel.best_travel.domain.entity.jpa.CustomerEntity;
 import com.best.travel.best_travel.domain.repository.jpa.CustomerRepository;
 import com.best.travel.best_travel.infraestructure.asbtract_services.IReportService;
@@ -46,7 +47,7 @@ public class PdfReportService implements IReportService {
     private static final String REPORT_NAME_PREFIX = "customer_report_";
 
     /**
-     * Genera un reporte PDF con los datos de clientes
+     * Genera un reporte PDF con los datos de clientes desde la base de datos
      * 
      * @return byte[] - Contenido del archivo PDF generado
      * @throws RuntimeException si ocurre algún error durante la generación
@@ -170,6 +171,94 @@ public class PdfReportService implements IReportService {
     public String generateFileName() {
         String timestamp = LocalDate.now().format(DateTimeFormatter.ofPattern("yyyyMMdd"));
         return REPORT_NAME_PREFIX + timestamp + PDF_FILE_EXTENSION;
+    }
+
+    /**
+     * Genera un reporte PDF con datos recibidos del frontend
+     * 
+     * @param reportData - Datos del reporte enviados desde el frontend
+     * @return byte[] - Contenido del archivo PDF generado
+     * @throws RuntimeException si ocurre algún error durante la generación
+     */
+    public byte[] generateReportFromJson(ReportDataRequest reportData) {
+        try {
+            log.info("Iniciando generación de reporte PDF desde JSON del frontend");
+            log.info("Se recibieron {} clientes para el reporte", reportData.getCustomers().size());
+            
+            // 1. Compilar el template JRXML
+            JasperReport jasperReport = compileReportTemplate();
+            
+            // 2. Preparar parámetros del reporte
+            Map<String, Object> parameters = prepareReportParametersFromJson(reportData);
+            
+            // 3. Crear datasource con los datos del JSON
+            JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(
+                reportData.getCustomers().stream()
+                    .map(this::mapJsonCustomerToReportData)
+                    .toList()
+            );
+            
+            // 4. Llenar el reporte con datos
+            JasperPrint jasperPrint = JasperFillManager.fillReport(
+                jasperReport, 
+                parameters, 
+                dataSource
+            );
+            
+            // 5. Exportar a PDF
+            ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+            JasperExportManager.exportReportToPdfStream(jasperPrint, outputStream);
+            
+            byte[] pdfBytes = outputStream.toByteArray();
+            log.info("Reporte PDF generado exitosamente desde JSON. Tamaño: {} bytes", pdfBytes.length);
+            
+            return pdfBytes;
+            
+        } catch (JRException e) {
+            log.error("Error al generar el reporte PDF desde JSON: {}", e.getMessage(), e);
+            throw new RuntimeException("Error al generar el reporte PDF desde JSON", e);
+        } catch (Exception e) {
+            log.error("Error inesperado al generar el reporte PDF desde JSON: {}", e.getMessage(), e);
+            throw new RuntimeException("Error inesperado al generar el reporte PDF desde JSON", e);
+        }
+    }
+
+    /**
+     * Prepara los parámetros del reporte desde los datos JSON
+     * 
+     * @param reportData - Datos del reporte
+     * @return Map<String, Object> - Parámetros del reporte
+     */
+    private Map<String, Object> prepareReportParametersFromJson(ReportDataRequest reportData) {
+        Map<String, Object> parameters = new HashMap<>();
+        
+        // Título del reporte desde el frontend
+        parameters.put("REPORT_TITLE", reportData.getReportTitle());
+        
+        // Fecha de generación
+        parameters.put("GENERATED_DATE", new java.util.Date());
+        
+        log.debug("Parámetros del reporte preparados desde JSON: {}", parameters.keySet());
+        return parameters;
+    }
+
+    /**
+     * Mapea un CustomerReportData del JSON a un Map para el reporte
+     * 
+     * @param customer - Datos del cliente desde JSON
+     * @return Map<String, Object> - Datos mapeados para el reporte
+     */
+    private Map<String, Object> mapJsonCustomerToReportData(ReportDataRequest.CustomerReportData customer) {
+        Map<String, Object> reportData = new HashMap<>();
+        
+        reportData.put("dni", customer.getDni());
+        reportData.put("fullName", customer.getFullName());
+        reportData.put("totalLodgings", customer.getTotalLodgings() != null ? customer.getTotalLodgings() : 0);
+        reportData.put("totalFlights", customer.getTotalFlights() != null ? customer.getTotalFlights() : 0);
+        reportData.put("totalTours", customer.getTotalTours() != null ? customer.getTotalTours() : 0);
+        reportData.put("totalPurchases", customer.getTotalPurchases());
+        
+        return reportData;
     }
 
     /**

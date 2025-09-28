@@ -15,42 +15,18 @@ Esta implementación proporciona endpoints para generar reportes PDF usando Jasp
 
 ## Endpoints Disponibles
 
-### 1. Descarga Directa de PDF
+### 1. Descarga Directa de PDF (desde Base de Datos)
 ```
 GET /api/v1/report/pdf
 ```
 
-**Descripción**: Genera y descarga inmediatamente un reporte PDF con información de clientes.
+**Descripción**: Genera y descarga inmediatamente un reporte PDF con información de clientes desde la base de datos.
 
 **Respuesta**: 
 - Content-Type: `application/pdf`
 - Content-Disposition: `attachment; filename="customer_report_YYYYMMDD.pdf"`
 
-**Uso en Frontend**:
-```javascript
-// Opción 1: Descarga directa
-window.open('/api/v1/report/pdf', '_blank');
-
-// Opción 2: Fetch con manejo de errores
-fetch('/api/v1/report/pdf')
-  .then(response => {
-    if (response.ok) {
-      return response.blob();
-    }
-    throw new Error('Error al generar el reporte');
-  })
-  .then(blob => {
-    const url = window.URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = 'customer_report.pdf';
-    a.click();
-    window.URL.revokeObjectURL(url);
-  })
-  .catch(error => console.error('Error:', error));
-```
-
-### 2. Información del Reporte
+### 2. Información del Reporte (desde Base de Datos)
 ```
 GET /api/v1/report/pdf/info
 ```
@@ -71,20 +47,122 @@ GET /api/v1/report/pdf/info
 }
 ```
 
-**Uso en Frontend**:
+### 3. 🆕 Generar PDF desde JSON del Frontend
+```
+POST /api/v1/report/pdf/from-json
+```
+
+**Descripción**: Genera un reporte PDF usando datos enviados desde el frontend en formato JSON.
+
+**Request Body**:
+```json
+{
+  "reportTitle": "Reporte Personalizado - Best Travel",
+  "reportSubtitle": "Generado desde el frontend",
+  "customers": [
+    {
+      "dni": "12345678",
+      "fullName": "Juan Pérez",
+      "totalLodgings": 5,
+      "totalFlights": 3,
+      "totalTours": 2
+    },
+    {
+      "dni": "87654321",
+      "fullName": "María García",
+      "totalLodgings": 2,
+      "totalFlights": 4,
+      "totalTours": 1
+    }
+  ]
+}
+```
+
+**Respuesta**: 
+- Content-Type: `application/pdf`
+- Content-Disposition: `attachment; filename="customer_report_YYYYMMDD.pdf"`
+
+### 4. 🆕 Información del Reporte desde JSON
+```
+POST /api/v1/report/pdf/from-json/info
+```
+
+**Descripción**: Retorna información del reporte PDF generado desde datos JSON del frontend.
+
+**Request Body**: Mismo que el endpoint anterior
+
+**Respuesta**:
+```json
+{
+  "fileName": "customer_report_20241201.pdf",
+  "contentType": "application/pdf",
+  "fileSize": 15420,
+  "generatedAt": "2024-12-01T10:30:00",
+  "reportType": "PDF",
+  "downloadUrl": "/api/v1/report/pdf/from-json",
+  "status": "SUCCESS",
+  "message": "Reporte generado exitosamente"
+}
+```
+
+## Uso en Frontend
+
+### Opción 1: Reporte desde Base de Datos
 ```javascript
-// Obtener información del reporte
+// Descarga directa
+window.open('/api/v1/report/pdf', '_blank');
+
+// Obtener información primero
 fetch('/api/v1/report/pdf/info')
   .then(response => response.json())
   .then(data => {
     if (data.status === 'SUCCESS') {
       console.log(`Reporte: ${data.fileName} (${data.fileSize} bytes)`);
-      // Usar la URL de descarga
       window.open(data.downloadUrl, '_blank');
-    } else {
-      console.error('Error:', data.message);
     }
   });
+```
+
+### Opción 2: 🆕 Reporte desde JSON (Recomendado)
+```javascript
+// Datos preparados en el frontend
+const reportData = {
+  reportTitle: "Reporte Personalizado - Best Travel",
+  customers: [
+    {
+      dni: "12345678",
+      fullName: "Juan Pérez",
+      totalLodgings: 5,
+      totalFlights: 3,
+      totalTours: 2
+    }
+    // ... más clientes
+  ]
+};
+
+// Generar reporte
+fetch('/api/v1/report/pdf/from-json', {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify(reportData)
+})
+.then(response => {
+  if (response.ok) {
+    return response.blob();
+  }
+  throw new Error('Error al generar el reporte');
+})
+.then(blob => {
+  const url = window.URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'customer_report.pdf';
+  a.click();
+  window.URL.revokeObjectURL(url);
+})
+.catch(error => console.error('Error:', error));
 ```
 
 ## Estructura del Reporte
@@ -239,6 +317,67 @@ INFO  - Reporte PDF generado exitosamente. Tamaño: 15420 bytes
 - Los archivos PDF se generan dinámicamente, no se almacenan en el servidor
 - Headers de cache configurados para evitar almacenamiento en navegador
 
+## 🎯 **¿Cuándo usar cada enfoque?**
+
+### 📊 **Reporte desde Base de Datos** (GET endpoints)
+**Usar cuando:**
+- Necesitas datos siempre actualizados
+- El reporte es estándar y no requiere filtros
+- Quieres simplicidad en el frontend
+- Los datos son confidenciales y no deben enviarse al frontend
+
+**Ejemplo de uso:**
+```javascript
+// Simple y directo
+window.open('/api/v1/report/pdf', '_blank');
+```
+
+### 🎨 **Reporte desde JSON** (POST endpoints) - **RECOMENDADO**
+**Usar cuando:**
+- El frontend ya tiene los datos cargados
+- Necesitas filtros dinámicos o personalización
+- Quieres mejor performance (no consultas adicionales)
+- El usuario puede seleccionar qué datos incluir
+- Necesitas reportes personalizados con títulos diferentes
+
+**Ejemplo de uso:**
+```javascript
+// Flexible y personalizable
+const filteredData = customers.filter(c => c.totalPurchases > 10);
+const reportData = {
+  reportTitle: "Clientes VIP - Best Travel",
+  customers: filteredData
+};
+
+fetch('/api/v1/report/pdf/from-json', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify(reportData)
+});
+```
+
+## 🔒 **Consideraciones de Seguridad**
+
+### Para endpoints desde JSON:
+1. **Validación**: Los datos se validan con `@Valid` y `@NotNull`
+2. **Sanitización**: Los strings se procesan de forma segura
+3. **Límites**: Considera implementar límites de tamaño para el JSON
+4. **Autenticación**: Asegúrate de que solo usuarios autorizados puedan generar reportes
+
+### Ejemplo de validación adicional:
+```java
+@Size(max = 1000, message = "Máximo 1000 clientes por reporte")
+private List<CustomerReportData> customers;
+```
+
+## 📈 **Ventajas del Enfoque JSON**
+
+1. **Performance**: No hay consultas adicionales a la BD
+2. **Flexibilidad**: El frontend controla exactamente qué datos incluir
+3. **UX**: El usuario puede aplicar filtros en tiempo real
+4. **Reutilización**: El mismo endpoint sirve para diferentes tipos de reportes
+5. **Escalabilidad**: Menos carga en el servidor de base de datos
+
 ## Próximos Pasos
 
 1. **Implementar filtros**: Agregar parámetros para filtrar datos por fecha, cliente, etc.
@@ -246,3 +385,5 @@ INFO  - Reporte PDF generado exitosamente. Tamaño: 15420 bytes
 3. **Reportes programados**: Implementar generación automática de reportes
 4. **Cache de reportes**: Para reportes que no cambian frecuentemente
 5. **Compresión**: Implementar compresión para reportes grandes
+6. **Límites de seguridad**: Implementar límites de tamaño para JSON
+7. **Plantillas personalizables**: Permitir diferentes templates JRXML
